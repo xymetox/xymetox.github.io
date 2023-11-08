@@ -1,0 +1,3150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>OPEL CAN</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <style type="text/css">
+.message {
+    padding-bottom: 20px;
+    margin-bottom: 80px;
+}
+
+.message .id {
+    float: left;
+    margin: 0 10px;
+    font-family: monospace;
+    font-size: 100%;
+    font-weight: bold;
+}
+
+.message .bits {
+    float: left;
+    position: relative;
+    font-family: monospace;
+}
+
+.message .bits .info {
+    position: absolute;
+    left: 4px;
+    border-left: 1px dotted #000;
+    border-bottom: 1px dotted #000;
+    padding-left: 3px;
+    white-space: nowrap;
+}
+
+.message .bits:hover {
+    font-weight: bold;
+}
+
+.message .bits:hover .info {
+    border-left-style: solid;
+    border-bottom-style: solid;
+}
+
+.offset-1 { padding-top: 20px; }
+.offset-2 { padding-top: 40px; }
+.offset-3 { padding-top: 60px; }
+.offset-4 { padding-top: 80px; }
+.offset-5 { padding-top: 100px; }
+.offset-6 { padding-top: 120px; }
+.offset-7 { padding-top: 140px; }
+.offset-8 { padding-top: 160px; }
+.offset-9 { padding-top: 180px; }
+.offset-10 { padding-top: 200px; }
+.offset-11 { padding-top: 220px; }
+.offset-12 { padding-top: 240px; }
+.offset-13 { padding-top: 260px; }
+.offset-14 { padding-top: 280px; }
+.offset-15 { padding-top: 300px; }
+.offset-16 { padding-top: 320px; }
+.offset-17 { padding-top: 340px; }
+.offset-18 { padding-top: 360px; }
+.offset-19 { padding-top: 380px; }
+.offset-20 { padding-top: 400px; }
+.offset-21 { padding-top: 420px; }
+.offset-22 { padding-top: 440px; }
+.offset-23 { padding-top: 460px; }
+.offset-24 { padding-top: 480px; }
+
+.margin-1 { padding-bottom: 40px; }
+.margin-2 { padding-bottom: 60px; }
+.margin-3 { padding-bottom: 80px; }
+.margin-4 { padding-bottom: 100px; }
+.margin-5 { padding-bottom: 120px; }
+.margin-6 { padding-bottom: 140px; }
+.margin-7 { padding-bottom: 160px; }
+.margin-8 { padding-bottom: 180px; }
+.margin-9 { padding-bottom: 200px; }
+.margin-10 { padding-bottom: 220px; }
+.margin-11 { padding-bottom: 240px; }
+.margin-12 { padding-bottom: 260px; }
+.margin-13 { padding-bottom: 280px; }
+.margin-14 { padding-bottom: 300px; }
+.margin-15 { padding-bottom: 320px; }
+.margin-16 { padding-bottom: 340px; }
+.margin-17 { padding-bottom: 360px; }
+.margin-18 { padding-bottom: 380px; }
+.margin-19 { padding-bottom: 400px; }
+.margin-20 { padding-bottom: 420px; }
+.margin-21 { padding-bottom: 440px; }
+.margin-22 { padding-bottom: 460px; }
+.margin-23 { padding-bottom: 480px; }
+.margin-24 { padding-bottom: 500px; }
+
+.color-ecu { background: green; color: white }
+.color-uec { background: GreenYellow }
+.color-rec { background: BlueYellow }
+.color-cim { background: yellow }
+.color-ipc { background: cyan }
+.color-cd30mp3 { background: HotPink }
+.color-dis { background: red }
+.color-steering-wheel { background: blue; color: white }
+.color-display { background: red }
+.color-parktronic { background: BlueViolet; color: white }
+.color-yatour { background: Chocolate }
+.color-climate { background: DarkCyan }
+.color-fmux { background: GreenYellow }
+.color-radio { background: HotPink }
+.color-dashboard { background: LightCoral }
+.color-HSCAN { background: LightCyan }
+.color-MSCAN { background: LightBlue }
+.color-LSCAN { background: white; color: black }
+
+
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="jumbotron">
+                <h1>Opel CAN bus</h1>
+                <p> All data related to Opel Zafira B, Astra H</p>
+                <p> Based on PSA CAN bus https://github.com/autowp/</p>
+                <a href="https://github.com/autowp/autowp.github.io" class="btn btn-primary">View on github, contribute</a>
+            </div>
+
+            <div class="well">
+                <h3>Legend</h3>
+                <ul>
+                    <li>
+                        <span class="label label-info">Zafira B</span> - based on Zafira B / Astra H
+                    </li>
+                    <li>
+                        <span class="label label-info">Vectra C</span> - based on Vectra C
+                    </li>
+                    <li>
+                        <span class="label label-info">Corsa D</span> - based on Corsa D
+                    </li>
+                    <li>
+                        <span class="label label-info">Antara</span> - based on Antara
+                    </li>
+                </ul>
+                
+                <p>
+                    <span class="color-ecu">ECU</span>
+                    <span class="color-cim">CIM</span>
+                    <span class="color-ipc">IPC-Dashboard</span>
+                    <span class="color-cd30mp3">CD30MP3-Radio</span>
+                    <span class="color-dis">CID/GID-Display</span>
+                    <span class="color-uec">UEC</span>
+                    <span class="color-rec">REC</span>
+                    <span class="color-steering-wheel">Steering wheel</span>
+                    <span class="color-display">Display</span>
+                    <span class="color-parktronic">Parktronic</span>
+                    <span class="color-yatour">Yatour</span>
+                    <span class="color-climate">Climate</span>
+                    <span class="color-radio">Radio</span>
+                    <span class="color-dashboard">Dashboard</span>
+                    <span class="color-HSCAN">HSCAN</span>
+                    <span class="color-MSCAN">MSCAN</span>
+                    <span class="color-LSCAN">LSCAN</span>
+                </p>
+            </div>
+            
+            
+            <table class="table table-hover table-condensed">
+                <caption>ID index</caption>
+                <p>
+                    <span class="color-HSCAN">HSCAN</span>
+                    <span class="color-MSCAN">MSCAN</span>
+                    <span class="color-LSCAN">LSCAN</span>
+                </p>
+                <tbody>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#040">040</td>
+                        <td class="color-LSCAN"><a href="#048">048</td>
+                        <td class="color-LSCAN"><a href="#050">050</td>
+                        <td class="color-LSCAN"><a href="#068">068</td>
+                        <td class="color-LSCAN"><a href="#090">090</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#100">100</td>
+                        <td class="color-LSCAN"><a href="#i101">101</td>
+                        <td class="color-HSCAN"><a href="#i102HS">102</td>
+                        <td class="color-LSCAN"><a href="#108">108</td>
+                        <td class="color-HSCAN"><a href="#i110HS">110</td>
+                        <td class="color-LSCAN"><a href="#i110">110</td>
+                        <td class="color-LSCAN"><a href="#i115">115</td>
+                        <td class="color-LSCAN"><a href="#i11A">11A</td>
+                        <td class="color-HSCAN"><a href="#i120HS">120</td>
+                        <td class="color-LSCAN"><a href="#i130">130</td>
+                        <td class="color-LSCAN"><a href="#i135">135</td>
+                        <td class="color-HSCAN"><a href="#i140HS">140</td>
+                        <td class="color-LSCAN"><a href="#i145">145</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-HSCAN"><a href="#i150HS">150</td>
+                        <td class="color-HSCAN"><a href="#i151HS">151</td>
+                        <td class="color-LSCAN"><a href="#i155">155</td>
+                        <td class="color-LSCAN"><a href="#i160">160</td>
+                        <td class="color-LSCAN"><a href="#i170">170</td>
+                        <td class="color-LSCAN"><a href="#i175">175</td>
+                        <td class="color-HSCAN"><a href="#i180HS">180</td>
+                        <td class="color-MSCAN"><a href="#i180MS">180</td>
+                        <td class="color-HSCAN"><a href="#i188HS">188</td>
+                        <td class="color-MSCAN"><a href="#i188MS">188</td>
+                        <td class="color-LSCAN"><a href="#i188">188</td>
+                        <td class="color-MSCAN"><a href="#i189MS">189</td>
+                        <td class="color-LSCAN"><a href="#i190">190</td>
+                        <td class="color-HSCAN"><a href="#i1A0HS">1A0</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-MSCAN"><a href="#i201MS">201</td>
+                        <td class="color-MSCAN"><a href="#i206MS">206</td>
+                        <td class="color-MSCAN"><a href="#i208MS">208</td>
+                        <td class="color-LSCAN"><a href="#i230">230</td>
+                        <td class="color-LSCAN"><a href="#i235">235</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-MSCAN"><a href="#i241MS">241</td>
+                        <td class="color-LSCAN"><a href="#i242">242</td>
+                        <td class="color-HSCAN"><a href="#i243HS">243</td>
+                        <td class="color-HSCAN"><a href="#i244HS">244</td>
+                        <td class="color-HSCAN"><a href="#i245HS">245</td>
+                        <td class="color-LSCAN"><a href="#i245">245</td>
+                        <td class="color-LSCAN"><a href="#i246">246</td>
+                        <td class="color-LSCAN"><a href="#i247">247</td>
+                        <td class="color-MSCAN"><a href="#i248MS">248</td>
+                        <td class="color-LSCAN"><a href="#i249">249</td>
+                        <td class="color-LSCAN"><a href="#i24A">24A</td>
+                        <td class="color-LSCAN"><a href="#i24B">24B</td>
+                        <td class="color-LSCAN"><a href="#i24C">24C</td>
+                        <td class="color-LSCAN"><a href="#i24D">24D</td>
+                        <td class="color-LSCAN"><a href="#i24E">24E</td>
+                        <td class="color-LSCAN"><a href="#i24F">24F</td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#i250">250</td>
+                        <td class="color-LSCAN"><a href="#i251">251</td>
+                        <td class="color-LSCAN"><a href="#i252">252</td>
+                        <td class="color-LSCAN"><a href="#i253">253</td>
+                        <td class="color-LSCAN"><a href="#i254">254</td>
+                        <td class="color-LSCAN"><a href="#i255">255</td>
+                        <td class="color-LSCAN"><a href="#i256">256</td>
+                        <td class="color-LSCAN"><a href="#i257">257</td>
+                        <td class="color-LSCAN"><a href="#i258">258</td>
+                        <td class="color-LSCAN"><a href="#i259">259</td>
+                        <td class="color-LSCAN"><a href="#i25A">25A</td>
+                        <td class="color-LSCAN"><a href="#i25B">25B</td>
+                        <td class="color-LSCAN"><a href="#i25C">25C</td>
+                        <td class="color-LSCAN"><a href="#i25D">25D</td>
+                        <td class="color-LSCAN"><a href="#i25E">25E</td>
+                        <td class="color-LSCAN"><a href="#i25F">25F</td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#i260">260</td>
+                        <td class="color-HSCAN"><a href="#i272HS">272</td>
+                        <td class="color-LSCAN"><a href="#i275">275</td>
+                        <td class="color-HSCAN"><a href="#i280HS">280</td>
+                        <td class="color-LSCAN"><a href="#i280">280</td>
+                        <td class="color-LSCAN"><a href="#i285">285</td>
+                        <td class="color-HSCAN"><a href="#i290HS">290</td>
+                        <td class="color-HSCAN"><a href="#i295HS">295</td>
+                        <td class="color-LSCAN"><a href="#i295">295</td>
+                        <td class="color-MSCAN"><a href="#i2B0MS">2B0</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-MSCAN"><a href="#i2C1MS">2C1</td>
+                        <td class="color-MSCAN"><a href="#i2C7MS">2C7</td>
+                        <td class="color-MSCAN"><a href="#i2C8MS">2C8</td>
+                        <td class="color-MSCAN"><a href="#i2CAMS">2CA</td>
+                        <td class="color-LSCAN"><a href="#i2CC">2CC</td>
+                        <td class="color-MSCAN"><a href="#i2E1MS">2E1</td>
+                        <td class="color-MSCAN"><a href="#i2E7MS">2E7</td>
+                        <td class="color-MSCAN"><a href="#i2E8MS">2E8</td>
+                        <td class="color-MSCAN"><a href="#i2EAMS">2EA</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-HSCAN"><a href="#i300HS">300</td>
+                        <td class="color-HSCAN"><a href="#i301HS">301</td>
+                        <td class="color-LSCAN"><a href="#i305">305</td>
+                        <td class="color-LSCAN"><a href="#i315">315</td>
+                        <td class="color-LSCAN"><a href="#i330">330</td>
+                        <td class="color-LSCAN"><a href="#i340">340</td>
+                        <td class="color-LSCAN"><a href="#i350">350</td>
+                        <td class="color-LSCAN"><a href="#i360">360</td>
+                        <td class="color-LSCAN"><a href="#i370">370</td>
+                        <td class="color-LSCAN"><a href="#i375">375</td>
+                        <td class="color-HSCAN"><a href="#i380HS">380</td>
+                        <td class="color-HSCAN"><a href="#i381HS">381</td>
+                        <td class="color-HSCAN"><a href="#i382HS">382</td>
+                        <td class="color-HSCAN"><a href="#i383HS">383</td>
+                        <td class="color-HSCAN"><a href="#i390HS">390</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#i400">400</td>
+                        <td class="color-HSCAN"><a href="#i410HS">410</td>
+                        <td class="color-LSCAN"><a href="#i425">425</td>
+                        <td class="color-LSCAN"><a href="#i430">430</td>
+                        <td class="color-HSCAN"><a href="#i440HS">440</td>
+                        <td class="color-LSCAN"><a href="#i440">440</td>
+                        <td class="color-LSCAN"><a href="#i445">445</td>
+                        <td class="color-MSCAN"><a href="#i450MS">450</td>
+                        <td class="color-LSCAN"><a href="#i450">450</td>
+                        <td class="color-MSCAN"><a href="#i452MS">452</td>
+                        <td class="color-MSCAN"><a href="#i454MS">454</td>
+                        <td class="color-MSCAN"><a href="#i458MS">458</td>
+                        <td class="color-MSCAN"><a href="#i46CMS">46C</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-HSCAN"><a href="#i480HS">480</td>
+                        <td class="color-HSCAN"><a href="#i481HS">481</td>
+                        <td class="color-HSCAN"><a href="#i4A0HS">4A0</td>
+                        <td class="color-MSCAN"><a href="#i4C6MS">4C6</td>
+                        <td class="color-MSCAN"><a href="#i4E0MS">4E0</td>
+                        <td class="color-MSCAN"><a href="#i4E8MS">4E8</td>
+                        <td class="color-MSCAN"><a href="#i4E9MS">4E9</td>
+                        <td class="color-MSCAN"><a href="#i4ECMS">4EC</td>
+                        <td class="color-MSCAN"><a href="#i4EDMS">4ED</td>
+                        <td class="color-MSCAN"><a href="#i4EEMS">4EE</td>
+                        <td class="color-MSCAN"><a href="#i4F0MS">4F0</td>
+                        <td class="color-MSCAN"><a href="#i4F1MS">4F1</td>
+                        <td class="color-MSCAN"><a href="#i4F2MS">4F2</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#i500">500</td>
+                        <td class="color-MSCAN"><a href="#i501MS">501</td>
+                        <td class="color-MSCAN"><a href="#i506MS">506</td>
+                        <td class="color-MSCAN"><a href="#i508MS">508</td>
+                        <td class="color-HSCAN"><a href="#i510HS">510</td>
+                        <td class="color-HSCAN"><a href="#i518HS">518</td>
+                        <td class="color-LSCAN"><a href="#i520">520</td>
+                        <td class="color-HSCAN"><a href="#i530HS">530</td>
+                        <td class="color-LSCAN"><a href="#i530">530</td>
+                        <td class="color-HSCAN"><a href="#i531HS">531</td>
+                        <td class="color-LSCAN"><a href="#i531">531</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#i541">541</td>
+                        <td class="color-LSCAN"><a href="#i542">542</td>
+                        <td class="color-HSCAN"><a href="#i543HS">543</td>
+                        <td class="color-HSCAN"><a href="#i544HS">544</td>
+                        <td class="color-HSCAN"><a href="#i545HS">545</td>
+                        <td class="color-LSCAN"><a href="#i545">545</td>
+                        <td class="color-LSCAN"><a href="#i546">546</td>
+                        <td class="color-LSCAN"><a href="#i547">547</td>
+                        <td class="color-LSCAN"><a href="#i548">548</td>
+                        <td class="color-LSCAN"><a href="#i549">549</td>
+                        <td class="color-LSCAN"><a href="#i54A">54A</td>
+                        <td class="color-LSCAN"><a href="#i54B">54B</td>
+                        <td class="color-LSCAN"><a href="#i54C">54C</td>
+                        <td class="color-LSCAN"><a href="#i54D">54D</td>
+                        <td class="color-LSCAN"><a href="#i54E">54E</td>
+                        <td class="color-LSCAN"><a href="#i54F">54F</td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#i550">550</td>
+                        <td class="color-LSCAN"><a href="#i551">551</td>
+                        <td class="color-LSCAN"><a href="#i552">552</td>
+                        <td class="color-LSCAN"><a href="#i553">553</td>
+                        <td class="color-LSCAN"><a href="#i554">554</td>
+                        <td class="color-LSCAN"><a href="#i555">555</td>
+                        <td class="color-LSCAN"><a href="#i556">556</td>
+                        <td class="color-LSCAN"><a href="#i557">557</td>
+                        <td class="color-LSCAN"><a href="#i558">558</td>
+                        <td class="color-LSCAN"><a href="#i559">559</td>
+                        <td class="color-LSCAN"><a href="#i55A">55A</td>
+                        <td class="color-LSCAN"><a href="#i55B">55B</td>
+                        <td class="color-LSCAN"><a href="#i55C">55C</td>
+                        <td class="color-LSCAN"><a href="#i55D">55D</td>
+                        <td class="color-LSCAN"><a href="#i55E">55E</td>
+                        <td class="color-LSCAN"><a href="#i55F">55F</td>
+                    </tr>
+                    <tr>
+                        <td class="color-HSCAN"><a href="#i5E8HS">5E8</td>
+                        <td class="color-LSCAN"><a href="#i5E8">5E8</td>
+                        <td class="color-HSCAN"><a href="#i5E9HS">5E9</td>
+                        <td class="color-LSCAN"><a href="#i5E8">5E9</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#i625">625</td>
+                        <td class="color-LSCAN"><a href="#i626">626</td>
+                        <td class="color-LSCAN"><a href="#i62B">62B</td>
+                        <td class="color-LSCAN"><a href="#i630">630</td>
+                        <td class="color-LSCAN"><a href="#i631">631</td>
+                        <td class="color-LSCAN"><a href="#i635">635</td>
+                        <td class="color-LSCAN"><a href="#i637">637</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#i641">641</td>
+                        <td class="color-LSCAN"><a href="#i642">642</td>
+                        <td class="color-HSCAN"><a href="#i643HS">643</td>
+                        <td class="color-HSCAN"><a href="#i644HS">644</td>
+                        <td class="color-HSCAN"><a href="#i645HS">645</td>
+                        <td class="color-LSCAN"><a href="#i645">645</td>
+                        <td class="color-LSCAN"><a href="#i646">646</td>
+                        <td class="color-LSCAN"><a href="#i647">647</td>
+                        <td class="color-LSCAN"><a href="#i648">648</td>
+                        <td class="color-LSCAN"><a href="#i649">649</td>
+                        <td class="color-LSCAN"><a href="#i64A">64A</td>
+                        <td class="color-LSCAN"><a href="#i64B">64B</td>
+                        <td class="color-LSCAN"><a href="#i64C">64C</td>
+                        <td class="color-LSCAN"><a href="#i64D">64D</td>
+                        <td class="color-LSCAN"><a href="#i64E">64E</td>
+                        <td class="color-LSCAN"><a href="#i64F">64F</td>
+                    </tr>
+                    <tr>
+                        <td class="color-LSCAN"><a href="#i650">650</td>
+                        <td class="color-LSCAN"><a href="#i651">651</td>
+                        <td class="color-LSCAN"><a href="#i652">652</td>
+                        <td class="color-LSCAN"><a href="#i653">653</td>
+                        <td class="color-LSCAN"><a href="#i654">654</td>
+                        <td class="color-LSCAN"><a href="#i655">655</td>
+                        <td class="color-LSCAN"><a href="#i656">656</td>
+                        <td class="color-LSCAN"><a href="#i657">657</td>
+                        <td class="color-LSCAN"><a href="#i658">658</td>
+                        <td class="color-LSCAN"><a href="#i659">659</td>
+                        <td class="color-LSCAN"><a href="#i65A">65A</td>
+                        <td class="color-LSCAN"><a href="#i65B">65B</td>
+                        <td class="color-LSCAN"><a href="#i65C">65C</td>
+                        <td class="color-LSCAN"><a href="#i65D">65D</td>
+                        <td class="color-LSCAN"><a href="#i65E">65E</td>
+                        <td class="color-LSCAN"><a href="#i65F">65F</td>
+                    </tr>
+                    <tr>
+                        <td class="color-MSCAN"><a href="#i661MS">661</td>
+                        <td class="color-MSCAN"><a href="#i666MS">666</td>
+                        <td class="color-MSCAN"><a href="#i668MS">668</td>
+                        <td class="color-MSCAN"><a href="#i680MS">680</td>
+                        <td class="color-MSCAN"><a href="#i681MS">681</td>
+                        <td class="color-MSCAN"><a href="#i682MS">682</td>
+                        <td class="color-MSCAN"><a href="#i683MS">683</td>
+                        <td class="color-MSCAN"><a href="#i684MS">684</td>
+                        <td class="color-MSCAN"><a href="#i685MS">685</td>
+                        <td class="color-MSCAN"><a href="#i688MS">688</td>
+                        <td class="color-MSCAN"><a href="#i689MS">689</td>
+                        <td class="color-MSCAN"><a href="#i68CMS">68C</td>
+                        <td class="color-MSCAN"><a href="#i691MS">691</td>
+                        <td class="color-MSCAN"><a href="#i696MS">696</td>
+                        <td class="color-MSCAN"><a href="#i698MS">698</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-MSCAN"><a href="#i6C1MS">6C1</td>
+                        <td class="color-MSCAN"><a href="#i6C7MS">6C7</td>
+                        <td class="color-MSCAN"><a href="#i6C8MS">6C8</td>
+                        <td class="color-MSCAN"><a href="#i6CAMS">6CA</td>
+                        <td class="color-MSCAN"><a href="#i6E0MS">6E0</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="color-MSCAN"><a href="#i766MS">766</td>
+                        <td class="color-MSCAN"><a href="#i7DDMS">7DD</td>
+                        <td class="color-HSCAN"><a href="#i7DEHS">7DF?</td>
+                        <td class="color-HSCAN"><a href="#i7E0HS">7E0</td>
+                        <td class="color-HSCAN"><a href="#i7E1HS">7E1</td>
+                        <td class="color-HSCAN"><a href="#i7E8HS">7E8</td>
+                        <td class="color-HSCAN"><a href="#i7E9HS">7E9</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="table table-hover">
+                <caption>Table of contents</caption>
+                <thead>
+                    <tr>
+                        <th>BUS</th>
+			<th>ID</th>
+                        <th>Length</th>
+                        <th>Data</th>
+                        <th>Period</th>
+                        <th>Source</th>
+                        <th>Comment</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+			<div id="i040">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#040">040</td>
+                        <td>6</td>
+                        <td>00 23 0F 3C 1E 8B </td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i048">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#048">048</td>
+			<td>6</td>
+                        <td>01 01 5B C9 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td  class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i050">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#050">050</a></td>
+                        <td>6</td>
+			<td>01 02 5B C9 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i068">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#068">068</td>
+                        <td>6</td>
+                        <td>01 02 5B C9 00 00 </td>
+                        <td></td>
+			<td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i090">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#090">090</td>
+                        <td>6</td>
+                        <td>00 00 71 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i100">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#100">100</a></td>
+                        <td>0</td>
+                        <td></td>
+                        <td>periodic</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">Bus WakeUp</span>
+                        </td>
+                        <td>Bus Wakeup ALL ECU (IPC,DIS, ...)</td>
+                        <td class="text-success">100%</td>
+                    </tr>
+                    <tr>
+			<div id="i101">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#101">101</a></td>
+                        <td>8</td>
+                        <td>FE 01 3E 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">GM DIAG</span>
+                        </td>
+                        <td>Tech2 test IPC</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i102HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#102HS">102?</a></td>
+                        <td>8</td>
+                        <td>?? ?? ?? ?? ?? ?? ?? ??</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">GM DIAG</span>
+                        </td>
+                        <td>Don't see</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i108">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#108">108</td>
+                        <td>8</td>
+                        <td>13 15 30 00 15 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td>Engine status,Tachometer (RPM), Speed</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i110HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#110HS">110</td>
+                        <td>7</td>
+                        <td>02 25 E0 3E 00 28 3E</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i110">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#110">110</td>
+                        <td>5</td>
+                        <td>00 08 3A 09 36</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td>Distance traveled???</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i115">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#115">115</td>
+                        <td>1</td>
+                        <td>00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i11A">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#11A">11A</td>
+                        <td>7</td>
+                        <td>10 31 8B 18 01 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td>Gear</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i120HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#120HS">120</td>
+                        <td>7</td>
+                        <td>00 4D A4 AC 1D 5B 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i130">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#130">130</td>
+                        <td>7</td>
+                        <td>00 95 DF 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i135">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#135">135</td>
+                        <td>4</td>
+                        <td>3C 00 5B C9</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i140HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#140HS">140</td>
+                        <td>8</td>
+                        <td>83 03 20 FC DE 00 27 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i145">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#145">145</td>
+                        <td>8</td>
+                        <td>20 01 18 82 C0 04 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i150HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#150HS">150</td>
+                        <td>8</td>
+                        <td>82 03 20 FC DE 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i151HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#151HS">151</td>
+                        <td>8</td>
+                        <td>13 20 05 98 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i155">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#155">155</td>
+                        <td>2</td>
+                        <td>02 69</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i160">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#160">160</td>
+                        <td>4</td>
+                        <td>01 00 0F 3C</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i170">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#170">170</td>
+                        <td>4</td>
+                        <td>54 0F 3C 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM 100%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i175">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#175">175</td>
+                        <td>8</td>
+                        <td>00 00 00 00 00 02 00 1F</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i180HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#180HS">180</td>
+                        <td>6</td>
+                        <td>A4 D4 00 60 10 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i180MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#180MS">180</td>
+                        <td>8</td>
+                        <td>46 03 17 07 3B 39 0A 8E</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS</span>
+                        </td>
+                        <td>Current Time</td>
+                        <td class="text-success">75%</td>
+                    </tr>
+                    <tr>
+			<div id="i188HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#188HS">188</td>
+                        <td>4</td>
+                        <td>00 00 7F FC</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i188MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#188MS">188</td>
+                        <td>6</td>
+                        <td>46 0A 07 62 06 E4</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i188">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#188">188</td>
+                        <td>3</td>
+                        <td>00 01 80</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i189MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#189MS">189</td>
+                        <td>4</td>
+                        <td>46 01 0F FA</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i190">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#190">190</td>
+                        <td>7</td>
+                        <td>00 00 84 F4 80 00 3F</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i1A0HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#1A0HS">1A0</td>
+                        <td>4</td>
+                        <td>00 0E 10 61</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i201MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#201MS">201</td>
+                        <td>3</td>
+                        <td>01 6C 01</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">EHU</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i206MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#206MS">206</td>
+                        <td>3</td>
+                        <td>00 92 01</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS from CIM??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i208MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#208MS">208</td>
+                        <td>6</td>
+                        <td>08 16 01 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">ECC??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i230">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#230">230</td>
+                        <td>7</td>
+                        <td>00 00 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zaf4ira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i235">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#235">235</td>
+                        <td>2</td>
+                        <td>00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">IPC 100%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i260">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#260">260</td>
+                        <td>3</td>
+                        <td>3A 43 7F</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i272HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#272HS">272</td>
+                        <td>8</td>
+                        <td>A5 06 65 00 FF 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i275">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#275">275</td>
+                        <td>5</td>
+                        <td>3C 04 0B FF A3</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i280HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#280HS">280</td>
+                        <td>8</td>
+                        <td>01 7B 01 5F 01 74 01 5B</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i280">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#280">280</td>
+                        <td>5</td>
+                        <td>70 05 1E 03 33</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i285">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#285">285</td>
+                        <td>5</td>
+                        <td>D7 06 65 00 FF</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">IPC 100%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i290HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#290HS">290</td>
+                        <td>8</td>
+                        <td>05 00 04 80 05 80 05 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>                    <tr>
+			<div id="i295HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#295HS">295</td>
+                        <td>8</td>
+                        <td>03 55 5E 4C</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i295">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#295">295</td>
+                        <td>4</td>
+                        <td>03 55 BE 49</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i2B0MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#2B0MS">2B0</td>
+                        <td>8</td>
+                        <td>46 0C 00 0A 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i2C1MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#2C1MS">2C1</td>
+                        <td>8</td>
+                        <td>30 00 00 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">EHU</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i2C7MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#2C7MS">2C7</td>
+                        <td>8</td>
+                        <td>30 00 00 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">UHP</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i2C8MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#2C8MS">2C8</td>
+                        <td>8</td>
+                        <td>30 00 00 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">ECC</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i2CAMS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#2CAMS">2CA</td>
+                        <td>8</td>
+                        <td>30 00 00 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Vectra C</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i2CC">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#2CC">2CC</td>
+                        <td>0</td>
+                        <td></td>
+                        <td>Very Very Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td>Seen Once</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i2E7MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#2E7MS">2E7</td>
+                        <td>8</td>
+                        <td>?? ?? ?? ?? ?? ?? ?? ??</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">UHP??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i2E8MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#2E8MS">2E8</td>
+                        <td>8</td>
+                        <td>48 0A 00 00 C8 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">ECC</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i2EAMS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#2EAMS">2EA</td>
+                        <td>8</td>
+                        <td>4A 04 00 00 C8 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Vectra C</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i300HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#300HS">300</td>
+                        <td>8</td>
+                        <td>00 03 00 80 86 0E D8 01</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i301HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#301HS">301</td>
+                        <td>8</td>
+                        <td>00 00 40 00 00 51 03 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i305">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#305">305</td>
+                        <td>7</td>
+                        <td>00 00 00 00 10 50 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">IPC 100%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i315">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#315">315</td>
+                        <td>1</td>
+                        <td>00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i330">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#330">330</td>
+                        <td>1</td>
+                        <td>08</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i340">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#340">340</td>
+                        <td>2</td>
+                        <td>00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i350">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#350">350</td>
+                        <td>4</td>
+                        <td>02 02 3C 0A</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i360">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#360">360</td>
+                        <td>3</td>
+                        <td>00 00 40</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i370">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#370">370</td>
+                        <td>8</td>
+                        <td>02 00 00 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i375">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#375">375</td>
+                        <td>2</td>
+                        <td>00 6C</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i380HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#380HS">380</td>
+                        <td>8</td>
+                        <td>E0 B6 78 00 02 FB 00 02</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i381HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#381HS">381</td>
+                        <td>8</td>
+                        <td>01 E2 04 4A 12 85 00 04</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i382HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#382HS">382</td>
+                        <td>8</td>
+                        <td>00 0B 04 15 50 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i383HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#383HS">383</td>
+                        <td>5</td>
+                        <td>2C 00 C0 45 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i390HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#390HS">390</td>
+                        <td>1</td>
+                        <td>04</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i400">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#400">400</td>
+                        <td>5</td>
+                        <td>13 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i410HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#410">410</a></td>
+                        <td>7</td>
+                        <td>00 1E 80 7C 08 7C 08</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i425">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#425">425</td>
+                        <td>1</td>
+                        <td>21</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i430">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#430">430</td>
+                        <td>4</td>
+                        <td>61 FF FF 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i440HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#440HS">440</td>
+                        <td>6</td>
+                        <td>12 07 17 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i440">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#440">440</td>
+                        <td>8</td>
+                        <td>88 74 04 72 00 38 70 17</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 100%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i445">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#445">445</td>
+                        <td>2</td>
+                        <td>00 8E</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i450MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#450MS">450</td>
+                        <td>4</td>
+                        <td>46 07 06 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i450">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#450">450</td>
+                        <td>3</td>
+                        <td>00 0A 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i452MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#452MS">452</td>
+                        <td>3</td>
+                        <td>46 02 01</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i454MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#454MS">454</td>
+                        <td>8</td>
+                        <td>46 00 01 00 01 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i458MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#458MS">458</td>
+                        <td>8</td>
+                        <td>77 C1 41 41 D5 C9 0A 02</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i46CMS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#46CMS">46C</td>
+                        <td>2</td>
+                        <td>41 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">EHU 100%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i480HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#480HS">480</td>
+                        <td>8</td>
+                        <td>10 11 04 A5 8C 22 4B 2F</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i481HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#481HS">481</td>
+                        <td>8</td>
+                        <td>07 66 42 00 60 C2 58 AF</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4A0HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#4A0HS">4A0</td>
+                        <td>6</td>
+                        <td>00 00 85 62 C0 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4C6MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4C6MS">4C6</td>
+                        <td>8</td>
+                        <td>46 21 AF FE 00 00 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4E0MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4E0MS">4E0</td>
+                        <td>7</td>
+                        <td>48 49 01 00 87 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">ECC 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4E8MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4E8MS">4E8</td>
+                        <td>7</td>
+                        <td>46 0F 19 F4 1A 00 02</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4E9MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4E9MS">4E9</td>
+                        <td>6</td>
+                        <td>46 01 00 84 F3 80</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4ECMS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4ECMS">4EC</td>
+                        <td>5</td>
+                        <td>46 07 82 64 01</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4EDMS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4EDMS">4ED</td>
+                        <td>4</td>
+                        <td>46 02 69 DB</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4EEMS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4EEMS">4EE</td>
+                        <td>4</td>
+                        <td>46 03 03 E4</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4F0MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4F0MS">4F0</td>
+                        <td>5</td>
+                        <td>46 0F 10 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4F1MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4F1MS">4F1</td>
+                        <td>3</td>
+                        <td>46 01 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i4F2MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#4F2MS">4F2</td>
+                        <td>3</td>
+                        <td>46 00 01</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i500">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#500">500</td>
+                        <td></td>
+                        <td>00 6C</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i501MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#501MS">501</td>
+                        <td>8</td>
+                        <td>61 01 42 16 01 00 40 01</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">EHU??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i506MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#506MS">506</td>
+                        <td>8</td>
+                        <td>86 01 42 16 84 00 00 03</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i508MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#508MS">508</td>
+                        <td>8</td>
+                        <td>18 01 42 16 01 00 40 02</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i510HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#510HS">510</td>
+                        <td>4</td>
+                        <td>80 82 4B 45</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i518HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#518HS">518</td>
+                        <td>8</td>
+                        <td>00 00 00 40 25 09 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i520">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#520">520</td>
+                        <td>8</td>
+                        <td>00 80 00 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i530HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#530HS">530</td>
+                        <td>8</td>
+                        <td>88 88 00 00 00 00 00 07</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM from TPMS??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i530">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#530">530</td>
+                        <td>8</td>
+                        <td>88 88 00 00 00 00 00 07</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">TPMS??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i531HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#531HS">531</td>
+                        <td>6</td>
+                        <td>37 00 00 F6 01 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i531">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#531">531</td>
+                        <td>5</td>
+                        <td>37 00 00 F6 01</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i5E8HS">
+                        <td class="color-HSCAN">LS</td>
+                        <td><a href="#5E8HS">5E8</td>
+                        <td>8</td>
+                        <td>81 00 05 6C 5B 00 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">ECU</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i5E8">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#5E8">5E8</td>
+                        <td>8</td>
+                        <td>81 00 05 6C 5B 00 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM from ECU</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i5E9HS">
+                        <td class="color-HSCAN">LS</td>
+                        <td><a href="#5E8HS">5E8</td>
+                        <td>8</td>
+                        <td>81 00 05 6C 5B 00 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">ECU</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i5E9">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#5E8">5E8</td>
+                        <td>8</td>
+                        <td>81 00 05 6C 5B 00 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM from ECU</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i625">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#625">625</td>
+                        <td>8</td>
+                        <td>00 48 50 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">CIM??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i626">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#626">626</td>
+                        <td>8</td>
+                        <td>00 11 00 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i62B">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#62B">62B</td>
+                        <td>8</td>
+                        <td>01 11 00 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i630">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#630">630</td>
+                        <td>8</td>
+                        <td>01 00 10 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">UEC??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i631">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#631">631</td>
+                        <td>8</td>
+                        <td>01 00 20 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">REC??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i635">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#635">635</td>
+                        <td>8</td>
+                        <td>00 08 30 00 00 00 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">IPC 100%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i637">
+                        <td class="color-LSCAN">LS</td>
+                        <td><a href="#637">637</td>
+                        <td>8</td>
+                        <td>01 00 10 00 00 00 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">SDM??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i661MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#661MS">661</td>
+                        <td>8</td>
+                        <td>46 06 41 03 0C 80 00 02</td>
+                        <td>Very Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">EHU?? 75% or DIS?? 25%</span>
+                        </td>
+                        <td>EHU?? but data like DIS??</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i666MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#666MS">666</td>
+                        <td>8</td>
+                        <td>48 06 46 0C 00 11 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">ECC 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i668MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#668MS">668</td>
+                        <td>8</td>
+                        <td>46 06 48 00 0C 12 37 FF</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i680MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#680MS">680</td>
+                        <td>6</td>
+                        <td>46 00 41 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i681MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#681MS">681</td>
+                        <td>5</td>
+                        <td>46 03 00 0A 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i682MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#682MS">682</td>
+                        <td>3</td>
+                        <td>46 01 90</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i683MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#683MS">683</td>
+                        <td>3</td>
+                        <td>46 01 8F</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i684MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#684MS">684</td>
+                        <td>6</td>
+                        <td>46 00 00 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i685MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#685MS">685</td>
+                        <td>4</td>
+                        <td>46 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i688MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#688MS">688</td>
+                        <td>3</td>
+                        <td>46 1F 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i689MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#689MS">689</td>
+                        <td>4</td>
+                        <td>46 7F 00 01</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i68CMS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#68CMS">68C</td>
+                        <td>3</td>
+                        <td>46 01 68</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i691MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#691MS">691</td>
+                        <td>8</td>
+                        <td>41 00 60 11 02 00 20 08</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">EHU 100%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i696MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#696MS">696</td>
+                        <td>8</td>
+                        <td>46 00 60 05 81 00 18 10</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">DIS 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i698MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#698MS">698</td>
+                        <td>8</td>
+                        <td>48 00 60 02 82 00 04 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">ECC 50%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i6C1MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#6C1MS">6C1</td>
+                        <td>8</td>
+                        <td>10 42 40 00 3F 03 10 1E</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">EHU 50%</span>
+                        </td>
+                        <td>ISO-TP</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i6C7MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#6C7MS">6C7</td>
+                        <td>8</td>
+                        <td>10 ?? ?? ?? ?? ?? ?? ??</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">UHP 50%</span>
+                        </td>
+                        <td>ISO-TP</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i6C8MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#6C8MS">6C8</td>
+                        <td>8</td>
+                        <td>10 1A C0 00 17 0A 23 03</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">ECC 50%</span>
+                        </td>
+                        <td>ISO-TP</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i6CAMS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#6CAMS">6CA</td>
+                        <td>8</td>
+                        <td>10 0E C0 00 0B 0A A3 04</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Vectra C</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td>ISO-TP</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i6E0MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#6E0MS">6E0</td>
+                        <td>8</td>
+                        <td>81 00 05 6C 5B 00 00 00</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i766MS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#766MS">766</td>
+                        <td>8</td>
+                        <td>41 06 46 04 01 02 00 00</td>
+                        <td>Rare</td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">EHU 100%</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i7DDMS">
+                        <td class="color-MSCAN">MS</td>
+                        <td><a href="#7DDMS">7DD</td>
+                        <td>3</td>
+                        <td>14 00 04</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">??</span>
+                        </td>
+                        <td></td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i7DFHS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#7DFHS">7DF</a></td>
+                        <td>8</td>
+                        <td>?? ?? ?? ?? ?? ?? ?? ??</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">GM DIAG</span>
+                        </td>
+                        <td>Don't see / GM or OBD2 DIAG</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i7E0HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#7E0HS">7E0</a></td>
+                        <td>8</td>
+                        <td>?? ?? ?? ?? ?? ?? ?? ??</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">OBD2 DIAG</span>
+                        </td>
+                        <td>OBD2 DIAG</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+                    <tr>
+			<div id="i7E8HS">
+                        <td class="color-HSCAN">HS</td>
+                        <td><a href="#7E8HS">7E8</a></td>
+                        <td>8</td>
+                        <td>?? ?? ?? ?? ?? ?? ?? ??</td>
+                        <td></td>
+                        <td>
+                            <span class="label label-info">Zafira B</span>
+                            <span class="label label-primary">OBD2 DIAG</span>
+                        </td>
+                        <td>OBD2 DIAG</td>
+                        <td class="text-danger">0%</td>
+                    </tr>
+
+
+
+
+
+
+
+                </tbody>
+            </table>
+
+
+            <div class="message margin-1" id="040">
+                <div class="network">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM</span></div>
+                <div class="dest">Dest: <span class="label label-success">IPC</span></div>
+                <div class="description"><p>Immo</p></div>
+                <div class="id">040</div>
+                <div class="structure clearfix">
+                    <div class="bits">6&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-3">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                        <div class="info offset-2">Key Immo Code ID</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-1">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info">Unknown</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="message" id="048">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM</span></div>
+                <div class="dest">Dest: <span class="label label-success">IPC</span></div>
+                <div class="description"><p>Key Remote</p></div>
+                <div class="id">048</div>
+                <div class="structure clearfix">
+                    <div class="bits">6&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-2">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-1">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                        <div class="info ">Key Remote ID</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                </div>
+            </div>
+
+            <div class="message" id="050">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM</span></div>
+                <div class="dest">Dest: <span class="label label-success">IPC</span></div>
+                <div class="description"><p>Key Remote</p></div>
+                <div class="id">050</div>
+                <div class="structure clearfix">
+                    <div class="bits">6&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-2">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-1">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                        <div class="info offset">Key Remote ID</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                </div>
+            </div>
+
+            <div class="message" id="068">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM</span></div>
+                <div class="dest">Dest: <span class="label label-success">IPC</span></div>
+                <div class="description"><p>Key Remote</p></div>
+                <div class="id">068</div>
+                <div class="structure clearfix">
+                    <div class="bits">6&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-2">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-1">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                        <div class="info offset">Key Remote ID</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                </div>
+            </div>
+
+            <div class="message margin-1" id="090">
+                <div class="network">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">???</span></div>
+                <div class="dest">Dest: <span class="label label-success">???</span></div>
+                <div class="description"><p>Unknown</p></div>
+                <div class="id">090</div>
+                <div class="structure clearfix">
+                    <div class="bits">6&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+			<div class="info">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                    </div>
+                </div>
+            </div>
+            
+            <div class="message" id="100">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">ALL</span></div>
+                <div class="dest">Dest: <span class="label label-success">ALL</span></div>
+                <div class="description"><p>Bus Wakeup</p></div>
+                <div class="id">100</div>
+                <div class="structure clearfix">
+                    <div class="bits">0</div>
+		</div>
+            </div>
+
+            <div class="message" id="108">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM</span></div>
+                <div class="dest">Dest: <span class="label label-success">IPC</span></div>
+                <div class="description"><p>Engine status, Tachometer (RPM), Speed</p></div>
+                <div class="id">108</div>
+                <div class="structure clearfix">
+                    <div class="bits">8&nbsp;</div>
+                    <div class="bits">
+                        EEEEEEEE
+                        <div class="info offset-2">Engine Status</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        RRRRRRRR
+                        <div class="info offset-1">Tachometer, RPM=RRRRRRRRRRRRRRRR/4</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        RRRRRRRR
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        SSSSSSSS
+                        <div class="info">Actual Speed</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        SSSSSSSS
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                </div>
+            </div>
+
+            <div class="message" id="110">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM</span></div>
+                <div class="dest">Dest: <span class="label label-success">IPC</span></div>
+                <div class="description"><p>Distance traveled???</p></div>
+                <div class="id">110</div>
+                <div class="structure clearfix">
+                    <div class="bits">5&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-2">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        LLLLLLLL
+                        <div class="info offset-1">Traveled Distance for front left wheel???</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        LLLLLLLL
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        RRRRRRRR
+                        <div class="info">Traveled Distance for front right wheel???</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        RRRRRRRR
+                    </div>
+                </div>
+            </div>
+
+            <div class="message" id="115">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM</span></div>
+                <div class="dest">Dest: <span class="label label-success"></span></div>
+                <div class="description"><p>Clutch Switch, Brake Switch Status !!!!need check????</p></div>
+                <div class="id">115</div>
+                <div class="structure clearfix">
+                    <div class="bits">1&nbsp;</div>
+                    <div class="bits">
+                        0000
+                    </div>
+                    <div class="bits">
+                        B
+                        <div class="info offset-3">Brake Switch 1 Status</div>
+                    </div>
+                    <div class="bits">
+                        B
+                        <div class="info offset-2">Brake Switch 2 Status</div>
+                    </div>
+                    <div class="bits">
+                        C
+                        <div class="info offset-1">Clutch Switch Status</div>
+                    </div>
+                    <div class="bits">
+                        x
+                    </div>
+                </div>
+            </div>
+
+            <div class="message" id="11A">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM</span></div>
+                <div class="dest">Dest: <span class="label label-success">IPC</span></div>
+                <div class="description"><p>Gearbox Info on IPC Middle Display (AT or MTA)</p></div>
+                <div class="id">11A</div>
+                <div class="structure clearfix margin-24">
+                    <div class="bits">7&nbsp;</div>
+                    <div class="bits">
+                        GG
+			<div class="info offset-22">00 - AT or MTA<br />
+						   11 - MT<br />
+                        </div>
+                    </div>
+                    <div class="bits">
+                        LLLLLL
+                        <div class="info offset-20">First (Left) Symbol<br />
+                            			    See Table below
+                        </div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        ZZZZ
+                        <div class="info offset-18">GEAR on AT ????<br />
+			0000 - None,
+			0100 - ???,
+			1001 - N???,
+			1100 - ???
+			</div>
+                    </div>
+                    <div class="bits">
+                        xx
+                    </div>
+                    <div class="bits">
+                        FF
+                        <div class="info offset-16">First (Left) Symbol indication<br />
+			00 - None,
+			01 - Permanent???,
+			10 - Flash,
+			11 - ???
+			</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        S
+                        <div class="info offset-14">Second (Right) Symbol indication<br />
+			0 - None,
+			1 - Permanent
+			</div>
+                    </div>
+                    <div class="bits">
+                        G
+			<div class="info offset-13">0 - AT or MTA,
+						   1 - MT
+                        </div>
+                    </div>
+                    <div class="bits">xx</div>
+                    <div class="bits">
+                        ZZZZ
+                        <div class="info offset-11">????????<br />
+			0 - None,
+			1000 - ?????,
+			1001 - ?????,
+			1011 - ?????
+			</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        G
+			<div class="info offset-10">0 - AT or MTA,
+						    1 - MT
+                        </div>
+                    </div>
+
+                    <div class="bits">x</div>
+                    <div class="bits">
+                        A
+                        <div class="info offset-8">??????????<br />
+			0 - None on MT or MTA,
+			1 - ???? on AT
+			</div>
+                    </div>
+                    <div class="bits">
+                        RRR
+                        <div class="info offset-6">Second (Right) Symbol<br />
+                                                   000 - None,
+                                                   001 - 1,
+                                                   010 - 2,
+                                                   011 - 3,
+                                                   100 - 4,
+                                                   101 - 5,
+                                                   110 - 6,
+                                                   111 - 7
+			</div>
+                    </div>
+                    <div class="bits">
+                        AAA
+                        <div class="info offset-4">??????????<br />
+			000 - None on MT or MTA,
+			100 - ???? on AT
+			</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        AA
+                        <div class="info offset-2">Arrow (Helper)<br />
+                            00 - Arrow None,
+                            01 - Arrow Up,
+                            10 - Arrow Down,
+                            11 - Arrow Up&Down
+                        </div>
+                    </div>
+                    <div class="bits">
+                        xxx
+                    </div>
+                    <div class="bits">
+                        YYY
+                        <div class="info">??????????<br />
+			000 - None on MT,
+			001 - ???? on MTA,
+			011 - ???? on AT,
+			100 - ???? on AT,
+			101 - ???? on AT
+			</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">00000000 00000000</div>
+                </div>
+            </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-3">
+                        <table class="table table-condensed" style="width: auto;">
+                            <caption>LLLLLL - First Symbol</caption>
+                            <thead>
+                                <tr><th>Bits</th><th>Hex</th><th>Value</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>000000</td><td>0x00</td><td>None</td></tr>
+                                <tr><td>000001</td><td>0x01</td><td>1</td></tr>
+                                <tr><td>000010</td><td>0x02</td><td>2</td></tr>
+                                <tr><td>000011</td><td>0x03</td><td>3</td></tr>
+                                <tr><td>000100</td><td>0x04</td><td>4</td></tr>
+                                <tr><td>000101</td><td>0x05</td><td>5</td></tr>
+                                <tr><td>000110</td><td>0x06</td><td>6</td></tr>
+                                <tr><td>000111</td><td>0x07</td><td>7</td></tr>
+                                <tr><td>001000</td><td>0x08</td><td>R</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3">
+                        <table class="table table-condensed" style="width: auto;">
+                            <caption>LLLLLL - First Symbol</caption>
+                            <thead>
+                                <tr><th>Bits</th><th>Hex</th><th>Value</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>001001</td><td>0x09</td><td>N</td></tr>
+                                <tr><td>001010</td><td>0x0A</td><td>P</td></tr>
+                                <tr><td>001011</td><td>0x0B</td><td>D</td></tr>
+                                <tr><td>001100</td><td>0x0C</td><td>O</td></tr>
+                                <tr><td>001101</td><td>0x0D</td><td>I</td></tr>
+                                <tr><td>001110</td><td>0x0E</td><td>L</td></tr>
+                                <tr><td>001111</td><td>0x0F</td><td>M</td></tr>
+                                <tr><td>010000</td><td>0x10</td><td>A</td></tr>
+                                <tr><td>111111</td><td>0x3F</td><td>F</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3">
+                        <table class="table table-condensed" style="width: auto;">
+                            <caption>RRR - Second Symbol</caption>
+                            <thead>
+                                <tr><th>Bits</th><th>Value</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>000</td><td>None</td></tr>
+                                <tr><td>001</td><td>1</td></tr>
+                                <tr><td>010</td><td>2</td></tr>
+                                <tr><td>011</td><td>3</td></tr>
+                                <tr><td>100</td><td>4</td></tr>
+                                <tr><td>101</td><td>5</td></tr>
+                                <tr><td>110</td><td>6</td></tr>
+                                <tr><td>111</td><td>7</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            <div class="message" id="130">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM</span></div>
+                <div class="dest">Dest: <span class="label label-success">IPC??</span></div>
+                <div class="description"><p>Fuel Injection???</p></div>
+                <div class="id">130</div>
+                <div class="structure clearfix margin-1">
+                    <div class="bits">7&nbsp;</div>
+                    <div class="bits">
+                        xxxxxxxx
+                        <div class="info offset-4">Unknown</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        FFFFFFFF
+                        <div class="info offset-3">Fuel Injection</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        FFFFFFFF
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        00000000
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        XXXXXXXX
+			<div class="info offset-2">Unknown 0x00,0xFF</div>
+                    </div>
+                    <div class="bits">
+                        XXXXXXXX
+			<div class="info offset-1">Unknown 0x00-0x03</div>
+                    </div>
+                    <div class="bits">
+                        XXXXXXXX
+			<div class="info">Unknown 0x00,0xFF</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="message" id="135">
+                <div class="LSCAN">Network: LSCAN (GMLAN)</div>
+                <div class="source">Source: <span class="label label-primary">CIM or IPC</span></div>
+                <div class="dest">Dest: <span class="label label-success">REC</span></div>
+                <div class="description"><p>Door Lock Control (together??? with id 230)</p></div>
+                <div class="id">135</div>
+                <div class="structure clearfix margin-1">
+                    <div class="bits">4&nbsp;</div>
+                    <div class="bits">
+                        LLLLLLLL
+                        <div class="info offset-2">00111100 0x3C - open/close? lock with key remote,<br />
+                                            	   01111100 0x7C - open lock with key on panel<br />
+                                            	   10111100 0xBC - close lock with key on panel<br />
+			</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        XXXXXXXX
+                        <div class="info offset-1">Button on panel - 0x00 or Key Remote 1 - 0x05, Key Remote 2 - 0x06
+			</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                        <div class="info">Key Remote ID</div>
+                    </div>
+                    <div class="bits">&nbsp;</div>
+                    <div class="bits">
+                        IIIIIIII
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </body>
+</html>
